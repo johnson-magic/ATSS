@@ -43,7 +43,7 @@ class ATSSPostProcessor(torch.nn.Module):
         box_regression = box_regression.reshape(N, -1, 4)
 
         candidate_inds = box_cls > self.pre_nms_thresh
-        pre_nms_top_n = candidate_inds.view(N, -1).sum(1)
+        pre_nms_top_n = candidate_inds.reshape(N, -1).sum(1)
         pre_nms_top_n = pre_nms_top_n.clamp(max=self.pre_nms_top_n)
 
         centerness = permute_and_flatten(centerness, N, A, 1, H, W)
@@ -66,8 +66,8 @@ class ATSSPostProcessor(torch.nn.Module):
             per_class = per_candidate_nonzeros[:, 1] + 1
 
             detections = self.box_coder.decode(
-                per_box_regression[per_box_loc, :].view(-1, 4),
-                per_anchors.bbox[per_box_loc, :].view(-1, 4)
+                per_box_regression[per_box_loc, :].reshape(-1, 4),
+                per_anchors.bbox[per_box_loc, :].reshape(-1, 4)
             )
 
             boxlist = BoxList(detections, per_anchors.size, mode="xyxy")
