@@ -16,9 +16,10 @@ from atss_core.utils.collect_env import collect_env_info
 from atss_core.utils.comm import synchronize, get_rank
 from atss_core.utils.logger import setup_logger
 from atss_core.utils.miscellaneous import mkdir
-
-
+import pdb
+import json
 def main():
+    pdb.set_trace()
     parser = argparse.ArgumentParser(description="PyTorch Object Detection Inference")
     parser.add_argument(
         "--config-file",
@@ -77,6 +78,10 @@ def main():
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference", dataset_name)
             mkdir(output_folder)
             output_folders[idx] = output_folder
+    #magic(cfg)
+    #out_file = open("myfile.json", "w")
+    #temp = json.dumps(cfg.__dict__)
+    #out_file.close()
     data_loaders_val = make_data_loader(cfg, is_train=False, is_distributed=distributed)
     for output_folder, dataset_name, data_loader_val in zip(output_folders, dataset_names, data_loaders_val):
         inference(

@@ -100,10 +100,11 @@ def main():
         start_time = time.time()
         composite = coco_demo.run_on_opencv_image(img)
         print("{}\tinference time: {:.2f}s".format(im_name, time.time() - start_time))
-        cv2.imshow(im_name, composite)
-    print("Press any keys to exit ...")
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+        cv2.imwrite(im_name, composite)
+        #cv2.imshow(im_name, composite)
+    #print("Press any keys to exit ...")
+    #cv2.waitKey()
+    #cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

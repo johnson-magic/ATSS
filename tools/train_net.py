@@ -25,7 +25,7 @@ from atss_core.utils.comm import synchronize, \
 from atss_core.utils.imports import import_file
 from atss_core.utils.logger import setup_logger
 from atss_core.utils.miscellaneous import mkdir
-
+import pdb
 
 def train(cfg, local_rank, distributed):
     model = build_detection_model(cfg)
@@ -169,7 +169,7 @@ def main():
         config_str = "\n" + cf.read()
         logger.info(config_str)
     logger.info("Running with config:\n{}".format(cfg))
-
+    pdb.set_trace() 
     model = train(cfg, args.local_rank, args.distributed)
 
     if not args.skip_test:
