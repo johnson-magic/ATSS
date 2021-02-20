@@ -170,7 +170,7 @@ def main():
         logger.info(config_str)
     logger.info("Running with config:\n{}".format(cfg))
 
-    model = train(cfg, args.local_rank, args.distributed)
+    model = train(cfg, args.local_rank, args.distributed)### cfg.keys() is useful. cfg is a dict-like object.
 
     if not args.skip_test:
         run_test(cfg, model, args.distributed)

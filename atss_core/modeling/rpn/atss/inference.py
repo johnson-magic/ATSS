@@ -123,15 +123,15 @@ class ATSSPostProcessor(torch.nn.Module):
 def make_atss_postprocessor(config, box_coder):
 
     box_selector = ATSSPostProcessor(
-        pre_nms_thresh=config.MODEL.ATSS.INFERENCE_TH,
-        pre_nms_top_n=config.MODEL.ATSS.PRE_NMS_TOP_N,
-        nms_thresh=config.MODEL.ATSS.NMS_TH,
-        fpn_post_nms_top_n=config.TEST.DETECTIONS_PER_IMG,
+        pre_nms_thresh=config.MODEL.ATSS.INFERENCE_TH, # 0.05
+        pre_nms_top_n=config.MODEL.ATSS.PRE_NMS_TOP_N, # 1000
+        nms_thresh=config.MODEL.ATSS.NMS_TH,# 0.6
+        fpn_post_nms_top_n=config.TEST.DETECTIONS_PER_IMG, # 100
         min_size=0,
-        num_classes=config.MODEL.ATSS.NUM_CLASSES,
-        bbox_aug_enabled=config.TEST.BBOX_AUG.ENABLED,
+        num_classes=config.MODEL.ATSS.NUM_CLASSES,# 81
+        bbox_aug_enabled=config.TEST.BBOX_AUG.ENABLED,# false
         box_coder=box_coder,
-        bbox_aug_vote=config.TEST.BBOX_AUG.VOTE
+        bbox_aug_vote=config.TEST.BBOX_AUG.VOTE# false
     )
 
     return box_selector

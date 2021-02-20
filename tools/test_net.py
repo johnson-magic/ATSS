@@ -35,8 +35,8 @@ def main():
     )
 
     args = parser.parse_args()
-
-    num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
+    #WORLD_SIZE: the total node number in cluster
+    num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1# os.environ : map of environmental variable. 
     distributed = num_gpus > 1
 
     if distributed:
@@ -46,7 +46,7 @@ def main():
         )
         synchronize()
 
-    cfg.merge_from_file(args.config_file)
+    cfg.merge_from_file(args.config_file)# unknown ; maybe collect config params into cfg
     cfg.merge_from_list(args.opts)
     cfg.freeze()
 
@@ -58,7 +58,7 @@ def main():
     logger.info("Collecting env info (might take some time)")
     logger.info("\n" + collect_env_info())
 
-    model = build_detection_model(cfg)
+    model = build_detection_model(cfg)#******************
     model.to(cfg.MODEL.DEVICE)
 
     output_dir = cfg.OUTPUT_DIR

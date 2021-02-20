@@ -37,7 +37,7 @@ class Registry(dict):
             _register_generic(self, module_name, module)
             return
 
-        # used as decorator
+        # used as decorator-
         def register_fn(fn):
             _register_generic(self, module_name, fn)
             return fn

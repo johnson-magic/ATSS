@@ -26,9 +26,9 @@ class GeneralizedRCNN(nn.Module):
     def __init__(self, cfg):
         super(GeneralizedRCNN, self).__init__()
 
-        self.backbone = build_backbone(cfg)
-        self.rpn = build_rpn(cfg, self.backbone.out_channels)
-        self.roi_heads = build_roi_heads(cfg, self.backbone.out_channels)
+        self.backbone = build_backbone(cfg)# include backbone(+fpn)
+        self.rpn = build_rpn(cfg, self.backbone.out_channels)# about loss, match, anchor
+        self.roi_heads = build_roi_heads(cfg, self.backbone.out_channels)# actually it is empty.
 
     def forward(self, images, targets=None):
         """

@@ -53,7 +53,7 @@ def build_resnet_fpn_p3p7_backbone(cfg):
     in_channels_stage2 = cfg.MODEL.RESNETS.RES2_OUT_CHANNELS
     out_channels = cfg.MODEL.RESNETS.BACKBONE_OUT_CHANNELS
     in_channels_p6p7 = in_channels_stage2 * 8 if cfg.MODEL.RETINANET.USE_C5 \
-        else out_channels
+        else out_channels# p6 and p7 is special, c3-p3, c4-p4, c5-p5, c6 and c7 is extra from c5 and p6.
     fpn = fpn_module.FPN(
         in_channels_list=[
             0,

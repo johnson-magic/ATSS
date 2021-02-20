@@ -101,14 +101,14 @@ class ATSSHead(torch.nn.Module):
     def __init__(self, cfg, in_channels):
         super(ATSSHead, self).__init__()
         self.cfg = cfg
-        num_classes = cfg.MODEL.ATSS.NUM_CLASSES - 1
-        num_anchors = len(cfg.MODEL.ATSS.ASPECT_RATIOS) * cfg.MODEL.ATSS.SCALES_PER_OCTAVE
+        num_classes = cfg.MODEL.ATSS.NUM_CLASSES - 1 # 80
+        num_anchors = len(cfg.MODEL.ATSS.ASPECT_RATIOS) * cfg.MODEL.ATSS.SCALES_PER_OCTAVE # 1
 
         cls_tower = []
         bbox_tower = []
         for i in range(cfg.MODEL.ATSS.NUM_CONVS):
             if self.cfg.MODEL.ATSS.USE_DCN_IN_TOWER and \
-                    i == cfg.MODEL.ATSS.NUM_CONVS - 1:
+                    i == cfg.MODEL.ATSS.NUM_CONVS - 1: #enen though you open the DCN switch, only the last one will use DCN 
                 conv_func = DFConv2d
             else:
                 conv_func = nn.Conv2d
@@ -163,10 +163,10 @@ class ATSSHead(torch.nn.Module):
                     torch.nn.init.constant_(l.bias, 0)
 
         # initialize the bias for focal loss
-        prior_prob = cfg.MODEL.ATSS.PRIOR_PROB
+        prior_prob = cfg.MODEL.ATSS.PRIOR_PROB # default value: 0.01
         bias_value = -math.log((1 - prior_prob) / prior_prob)
         torch.nn.init.constant_(self.cls_logits.bias, bias_value)
-        if self.cfg.MODEL.ATSS.REGRESSION_TYPE == 'POINT':
+        if self.cfg.MODEL.ATSS.REGRESSION_TYPE == 'POINT':# acually, it is box
             assert num_anchors == 1, "regressing from a point only support num_anchors == 1"
             torch.nn.init.constant_(self.bbox_pred.bias, 4)
 
@@ -177,13 +177,13 @@ class ATSSHead(torch.nn.Module):
         bbox_reg = []
         centerness = []
         for l, feature in enumerate(x):
-            cls_tower = self.cls_tower(feature)
+            cls_tower = self.cls_tower(feature) # note, here , cls_tower is not a list, but a Sequential object; 4 layers conv(with GN)
             box_tower = self.bbox_tower(feature)
 
             logits.append(self.cls_logits(cls_tower))
 
             bbox_pred = self.scales[l](self.bbox_pred(box_tower))
-            if self.cfg.MODEL.ATSS.REGRESSION_TYPE == 'POINT':
+            if self.cfg.MODEL.ATSS.REGRESSION_TYPE == 'POINT': 
                 bbox_pred = F.relu(bbox_pred)
             bbox_reg.append(bbox_pred)
 
