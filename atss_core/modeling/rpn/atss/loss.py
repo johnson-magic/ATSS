@@ -28,8 +28,8 @@ class ATSSLossComputation(object):
 
     def __init__(self, cfg, box_coder):
         self.cfg = cfg
-        self.cls_loss_func = SigmoidFocalLoss(cfg.MODEL.ATSS.LOSS_GAMMA, cfg.MODEL.ATSS.LOSS_ALPHA)
-        self.centerness_loss_func = nn.BCEWithLogitsLoss(reduction="sum")
+        self.cls_loss_func = SigmoidFocalLoss(cfg.MODEL.ATSS.LOSS_GAMMA, cfg.MODEL.ATSS.LOSS_ALPHA)#Focal loss = -alpha * (1-p) ^ gamma * log(p)
+        self.centerness_loss_func = nn.BCEWithLogitsLoss(reduction="sum")# gamma default = 2, loss_alpha = 0.25
         self.matcher = Matcher(cfg.MODEL.ATSS.FG_IOU_THRESHOLD, cfg.MODEL.ATSS.BG_IOU_THRESHOLD, True)
         self.box_coder = box_coder
 

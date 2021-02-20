@@ -167,12 +167,12 @@ def make_anchor_generator_retinanet(config):
 
 
 def make_anchor_generator_atss(config):
-    anchor_sizes = config.MODEL.ATSS.ANCHOR_SIZES
-    aspect_ratios = config.MODEL.ATSS.ASPECT_RATIOS
-    anchor_strides = config.MODEL.ATSS.ANCHOR_STRIDES
-    straddle_thresh = config.MODEL.ATSS.STRADDLE_THRESH
-    octave = config.MODEL.ATSS.OCTAVE
-    scales_per_octave = config.MODEL.ATSS.SCALES_PER_OCTAVE
+    anchor_sizes = config.MODEL.ATSS.ANCHOR_SIZES # (64, 128, 256, 512, 1024)
+    aspect_ratios = config.MODEL.ATSS.ASPECT_RATIOS# 1.0
+    anchor_strides = config.MODEL.ATSS.ANCHOR_STRIDES# (8, 16, 32, 64, 128) #anchor_sizes = 8*anchor_strides
+    straddle_thresh = config.MODEL.ATSS.STRADDLE_THRESH# 0
+    octave = config.MODEL.ATSS.OCTAVE# 2
+    scales_per_octave = config.MODEL.ATSS.SCALES_PER_OCTAVE# 1
 
     assert len(anchor_strides) == len(anchor_sizes), "Only support FPN now"
     new_anchor_sizes = []
@@ -181,7 +181,7 @@ def make_anchor_generator_atss(config):
         for scale_per_octave in range(scales_per_octave):
             octave_scale = octave ** (scale_per_octave / float(scales_per_octave))
             per_layer_anchor_sizes.append(octave_scale * size)
-        new_anchor_sizes.append(tuple(per_layer_anchor_sizes))
+        new_anchor_sizes.append(tuple(per_layer_anchor_sizes))#(64.0,), (128.0,), (256.0,), (512.0,), (1024.0,)
 
     anchor_generator = AnchorGenerator(
         tuple(new_anchor_sizes), aspect_ratios, anchor_strides, straddle_thresh
@@ -259,7 +259,7 @@ def _generate_anchors(base_size, scales, aspect_ratios):
     scales wrt a reference (0, 0, base_size - 1, base_size - 1) window.
     """
     anchor = np.array([1, 1, base_size, base_size], dtype=np.float) - 0.5
-    anchors = _ratio_enum(anchor, aspect_ratios)
+    anchors = _ratio_enum(anchor, aspect_ratios)# w, h, c_x, c_y
     anchors = np.vstack(
         [_scale_enum(anchors[i, :], scales) for i in range(anchors.shape[0])]
     )

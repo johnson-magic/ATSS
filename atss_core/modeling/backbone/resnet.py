@@ -87,9 +87,9 @@ class ResNet(nn.Module):
         # self.cfg = cfg.clone()
 
         # Translate string names to implementations
-        stem_module = _STEM_MODULES[cfg.MODEL.RESNETS.STEM_FUNC]
-        stage_specs = _STAGE_SPECS[cfg.MODEL.BACKBONE.CONV_BODY]
-        transformation_module = _TRANSFORMATION_MODULES[cfg.MODEL.RESNETS.TRANS_FUNC]
+        stem_module = _STEM_MODULES[cfg.MODEL.RESNETS.STEM_FUNC] # StemWithFixedBatchNorm
+        stage_specs = _STAGE_SPECS[cfg.MODEL.BACKBONE.CONV_BODY] # R-50-FPN-RETINANET
+        transformation_module = _TRANSFORMATION_MODULES[cfg.MODEL.RESNETS.TRANS_FUNC] # BottleneckWithFixedBatchNorm
 
         # Construct the stem module
         self.stem = stem_module(cfg)
@@ -100,8 +100,8 @@ class ResNet(nn.Module):
         in_channels = cfg.MODEL.RESNETS.STEM_OUT_CHANNELS
         stage2_bottleneck_channels = num_groups * width_per_group
         stage2_out_channels = cfg.MODEL.RESNETS.RES2_OUT_CHANNELS
-        self.stages = []
-        self.return_features = {}
+        self.stages = []#just the stage name list
+        self.return_features = {}# just a dic which the value is a bool variable: True or False.
         for stage_spec in stage_specs:
             name = "layer" + str(stage_spec.index)
             stage2_relative_factor = 2 ** (stage_spec.index - 1)
@@ -110,12 +110,12 @@ class ResNet(nn.Module):
             stage_with_dcn = cfg.MODEL.RESNETS.STAGE_WITH_DCN[stage_spec.index - 1]
             module = _make_stage(
                 transformation_module,
-                in_channels,
-                bottleneck_channels,
-                out_channels,
-                stage_spec.block_count,
-                num_groups,
-                cfg.MODEL.RESNETS.STRIDE_IN_1X1,
+                in_channels,                 # 64
+                bottleneck_channels,         # 64
+                out_channels,                # 256
+                stage_spec.block_count,      # 3
+                num_groups,                  # 1
+                cfg.MODEL.RESNETS.STRIDE_IN_1X1, 
                 first_stride=int(stage_spec.index > 1) + 1,
                 dcn_config={
                     "stage_with_dcn": stage_with_dcn,
@@ -124,7 +124,7 @@ class ResNet(nn.Module):
                 }
             )
             in_channels = out_channels
-            self.add_module(name, module)
+            self.add_module(name, module)# why i can't find where the function defined
             self.stages.append(name)
             self.return_features[name] = stage_spec.return_features
 
@@ -140,7 +140,7 @@ class ResNet(nn.Module):
             else:
                 m = getattr(self, "layer" + str(stage_index))
             for p in m.parameters():
-                p.requires_grad = False
+                p.requires_grad = False# this is a good example that how to freeze layer
 
     def forward(self, x):
         outputs = []
@@ -218,7 +218,7 @@ def _make_stage(
 ):
     blocks = []
     stride = first_stride
-    for _ in range(block_count):
+    for _ in range(block_count): #3
         blocks.append(
             transformation_module(
                 in_channels,
@@ -264,14 +264,14 @@ class Bottleneck(nn.Module):
             for modules in [self.downsample,]:
                 for l in modules.modules():
                     if isinstance(l, Conv2d):
-                        nn.init.kaiming_uniform_(l.weight, a=1)
+                        nn.init.kaiming_uniform_(l.weight, a=1)#何氏初始化
 
         if dilation > 1:
             stride = 1 # reset to be 1
 
         # The original MSRA ResNet models have stride in the first 1x1 conv
         # The subsequent fb.torch.resnet and Caffe2 ResNe[X]t implementations have
-        # stride in the 3x3 conv
+        # stride in the 3x3 conv;but here, i find it is 1 all layer
         stride_1x1, stride_3x3 = (stride, 1) if stride_in_1x1 else (1, stride)
 
         self.conv1 = Conv2d(

@@ -1,5 +1,5 @@
 MODEL:
-  META_ARCHITECTURE: "GeneralizedRCNN"
+  META_ARCHITECTURE: "GeneralizedRCNN" # META_ARCHITECTURE: init architecture; GeneralizedRCNN： abstract of all object detection net
   WEIGHT: "catalog://ImageNetPretrained/MSRA/R-50"
   RPN_ONLY: True
   ATSS_ON: True
@@ -32,5 +32,5 @@ SOLVER:
   WEIGHT_DECAY: 0.0001
   STEPS: (60000, 80000)
   MAX_ITER: 90000
-  IMS_PER_BATCH: 16
+  IMS_PER_BATCH: 2
   WARMUP_METHOD: "constant"

@@ -101,14 +101,14 @@ class ATSSHead(torch.nn.Module):
     def __init__(self, cfg, in_channels):
         super(ATSSHead, self).__init__()
         self.cfg = cfg
-        num_classes = cfg.MODEL.ATSS.NUM_CLASSES - 1
-        num_anchors = len(cfg.MODEL.ATSS.ASPECT_RATIOS) * cfg.MODEL.ATSS.SCALES_PER_OCTAVE
+        num_classes = cfg.MODEL.ATSS.NUM_CLASSES - 1 # 80
+        num_anchors = len(cfg.MODEL.ATSS.ASPECT_RATIOS) * cfg.MODEL.ATSS.SCALES_PER_OCTAVE # 1
 
         cls_tower = []
         bbox_tower = []
         for i in range(cfg.MODEL.ATSS.NUM_CONVS):
             if self.cfg.MODEL.ATSS.USE_DCN_IN_TOWER and \
-                    i == cfg.MODEL.ATSS.NUM_CONVS - 1:
+                    i == cfg.MODEL.ATSS.NUM_CONVS - 1: #enen though you open the DCN switch, only the last one will use DCN 
                 conv_func = DFConv2d
             else:
                 conv_func = nn.Conv2d

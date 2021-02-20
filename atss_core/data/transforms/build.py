@@ -20,17 +20,17 @@ def build_transforms(cfg, is_train=True):
         max_size = cfg.INPUT.MAX_SIZE_TEST
         flip_prob = 0
 
-    to_bgr255 = cfg.INPUT.TO_BGR255
+    to_bgr255 = cfg.INPUT.TO_BGR255# True
     normalize_transform = T.Normalize(
         mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD, to_bgr255=to_bgr255
     )
 
     transform = T.Compose(
         [
-            T.Resize(min_size, max_size),
-            T.RandomHorizontalFlip(flip_prob),
-            T.ToTensor(),
-            normalize_transform,
+            T.Resize(min_size, max_size),# 800, 1333
+            T.RandomHorizontalFlip(flip_prob),# 0.5 概率
+            T.ToTensor(), # to tensor
+            normalize_transform,# [102.9801, 115.9465, 122.7717], [1., 1., 1.] , to_bgr
         ]
     )
     return transform

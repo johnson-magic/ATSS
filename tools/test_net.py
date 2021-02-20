@@ -36,8 +36,8 @@ def main():
     )
 
     args = parser.parse_args()
-
-    num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
+    #WORLD_SIZE: the total node number in cluster
+    num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1# os.environ : map of environmental variable. 
     distributed = num_gpus > 1
 
     if distributed:
@@ -47,7 +47,7 @@ def main():
         )
         synchronize()
 
-    cfg.merge_from_file(args.config_file)
+    cfg.merge_from_file(args.config_file)# unknown ; maybe collect config params into cfg
     cfg.merge_from_list(args.opts)
     cfg.freeze()
 
@@ -59,7 +59,7 @@ def main():
     logger.info("Collecting env info (might take some time)")
     logger.info("\n" + collect_env_info())
 
-    model = build_detection_model(cfg)
+    model = build_detection_model(cfg)#******************
     model.to(cfg.MODEL.DEVICE)
 
     output_dir = cfg.OUTPUT_DIR
@@ -78,10 +78,6 @@ def main():
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference", dataset_name)
             mkdir(output_folder)
             output_folders[idx] = output_folder
-    #magic(cfg)
-    #out_file = open("myfile.json", "w")
-    #temp = json.dumps(cfg.__dict__)
-    #out_file.close()
     data_loaders_val = make_data_loader(cfg, is_train=False, is_distributed=distributed)
     for output_folder, dataset_name, data_loader_val in zip(output_folders, dataset_names, data_loaders_val):
         inference(
