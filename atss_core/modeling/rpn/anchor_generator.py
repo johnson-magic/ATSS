@@ -108,7 +108,19 @@ class AnchorGenerator(nn.Module):
             device = anchors.device
             inds_inside = torch.ones(anchors.shape[0], dtype=torch.uint8, device=device)
         boxlist.add_field("visibility", inds_inside)
+    
+    def AnchorGenerator_utest(func):
+        def wrapper(*args, **kwargs):
+            print("the type of atss_AnchorGenerator_utest is {}".format(type(args[2])))
+            for i, t in enumerate(args[2]):
+                torch.save(t, 'atss_AnchorGenerator_utest_input_{}.pt'.format(i))
+                print("save atss_AnchorGenerator_utest_input_{}.pt success!".format(i))
+            res = func(*args, **kwargs)
+            torch.save(res, 'atss_AnchorGenerator_utest_output.pt')
+            print("atss_AnchorGenerator_utest_output.pt success!")
+        return wrapper
 
+    @AnchorGenerator_utest
     def forward(self, image_list, feature_maps):
         grid_sizes = [feature_map.shape[-2:] for feature_map in feature_maps]
         anchors_over_all_feature_maps = self.grid_anchors(grid_sizes)
