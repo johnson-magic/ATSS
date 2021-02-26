@@ -20,7 +20,20 @@ def do_coco_evaluation(
     expected_results_sigma_tol,
 ):
     logger = logging.getLogger("atss_core.inference")
-
+    predictions = []
+    for id in range(5000):
+        name = "/data/magic_zhang/git/detection.pytorch/debug_{}.pt".format(id)
+        debug_res = {}
+        debug_res = torch.load(name)
+        pred_debug = debug_res['pred_debug']
+        wid_debug  = debug_res['image_wid']
+        hei_debug  = debug_res['image_hei']
+        label_debug = debug_res['labels_debug']
+        score_debug = debug_res['scores_debug']
+        bbox = BoxList(pred_debug, image_size=(wid_debug, hei_debug), mode='xyxy')
+        bbox.add_field('labels', label_debug)
+        bbox.add_field('scores', score_debug)
+        predictions.append(bbox)
     if box_only:
         logger.info("Evaluating bbox proposals")
         areas = {"all": "", "small": "s", "medium": "m", "large": "l"}
@@ -84,7 +97,7 @@ def prepare_for_coco_detection(predictions, dataset):
         boxes = prediction.bbox.tolist()
         scores = prediction.get_field("scores").tolist()
         labels = prediction.get_field("labels").tolist()
-
+        labels = [i+1 for i in labels]
         mapped_labels = [dataset.contiguous_category_id_to_json_id[i] for i in labels]
 
         coco_results.extend(

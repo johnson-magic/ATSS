@@ -102,7 +102,7 @@ def inference(
             num_devices,
         )
     )
-
+  
     predictions = _accumulate_predictions_from_multiple_gpus(predictions)
     if not is_main_process():
         return
