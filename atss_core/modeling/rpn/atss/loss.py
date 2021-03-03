@@ -76,6 +76,17 @@ class ATSSLossComputation(object):
             assert losses.numel() != 0
             return losses.sum()
 
+    def Metric_utest(func):
+        def wrapper(*args, **kwargs):
+            print(type(args[1]), type(args[2]))
+            for i in range(len(args[2][0])):
+                torch.save(args[2][0][i].bbox, "atss_Metric_utest_input_anchor_{}.pt".format(i))
+            torch.save(args[1][0].bbox, "atss_Metric_utest_input_target.pt")
+            res = func(*args, **kwargs)
+            return res
+        return wrapper
+
+    @Metric_utest
     def prepare_targets(self, targets, anchors):
         cls_labels = []
         reg_targets = []
@@ -142,7 +153,7 @@ class ATSSLossComputation(object):
                 anchors_cy_per_im = (anchors_per_im.bbox[:, 3] + anchors_per_im.bbox[:, 1]) / 2.0
                 anchor_points = torch.stack((anchors_cx_per_im, anchors_cy_per_im), dim=1)
 
-                distances = (anchor_points[:, None, :] - gt_points[None, :, :]).pow(2).sum(-1).sqrt()
+                distances = (anchor_points[:, None, :] - gt_points[None, :, :]).pow(2).sum(-1).sqrt()# break
 
                 # Selecting candidates based on the center distance between anchor box and object
                 candidate_idxs = []
