@@ -170,7 +170,7 @@ class ATSSHead(torch.nn.Module):
             assert num_anchors == 1, "regressing from a point only support num_anchors == 1"
             torch.nn.init.constant_(self.bbox_pred.bias, 4)
 
-        self.scales = nn.ModuleList([Scale(init_value=1.0) for _ in range(5)])
+        self.scales = nn.ModuleList([Scale(init_value=1.0) for _ in range(5)])#循环5次的作用,_称之为丢弃变量
 
     def forward(self, x):
         logits = []

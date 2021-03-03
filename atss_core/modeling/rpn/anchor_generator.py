@@ -118,6 +118,7 @@ class AnchorGenerator(nn.Module):
             res = func(*args, **kwargs)
             torch.save(res, 'atss_AnchorGenerator_utest_output.pt')
             print("atss_AnchorGenerator_utest_output.pt success!")
+            return res
         return wrapper
 
     @AnchorGenerator_utest
