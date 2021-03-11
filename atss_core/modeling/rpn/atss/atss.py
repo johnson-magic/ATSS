@@ -201,7 +201,7 @@ class ATSSModule(torch.nn.Module):
         self.loss_evaluator = make_atss_loss_evaluator(cfg, box_coder)
         self.box_selector_test = make_atss_postprocessor(cfg, box_coder)
         self.anchor_generator = make_anchor_generator_atss(cfg)
-
+    
     def forward(self, images, features, targets=None):
         box_cls, box_regression, centerness = self.head(features)
         anchors = self.anchor_generator(images, features)
@@ -211,6 +211,28 @@ class ATSSModule(torch.nn.Module):
         else:
             return self._forward_test(box_cls, box_regression, centerness, anchors)
 
+    def _forward_train_utest(func):
+        def wrapper(*args, **kwargs):
+            print(type(args[1]), type(args[2], type(args[3]), type(args[4]), type(args[5])))
+            import os
+            try:
+                os.mkdir('_forward_train_utest')
+            except OSError:
+                print("Creation of the directory _forward_train_utest failed")
+            else:
+                print("Successfully created the directory _forward_train_utest")
+
+            torch.save(args[1], "_forward_train_box_cls_utest_input.pt")
+            torch.save(args[2], "_forward_train_box_reg_utest_input.pt")
+            torch.save(args[3], "_forward_train_box_centerness_utest_input.pt")
+            for id in range(len(args[4])):
+                torch.save(args[4][id].bbox, "_forward_train_box_targets_utest_input_{}.pt".format(id))
+                for anchor_id in range(len(args[5][id]))
+                    torch.save(args[5][id][anchor_id].bbox, "_forward_train_box_anchors_utest_input_{}_{}.pt".format(id, anchor_id))
+            
+
+        return wrapper
+    @_forward_train_utest
     def _forward_train(self, box_cls, box_regression, centerness, targets, anchors):
         loss_box_cls, loss_box_reg, loss_centerness = self.loss_evaluator(
             box_cls, box_regression, centerness, targets, anchors

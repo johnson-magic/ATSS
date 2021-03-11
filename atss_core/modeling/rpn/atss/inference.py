@@ -43,7 +43,7 @@ class ATSSPostProcessor(torch.nn.Module):
         box_regression = box_regression.reshape(N, -1, 4)
 
         candidate_inds = box_cls > self.pre_nms_thresh
-        pre_nms_top_n = candidate_inds.reshape(N, -1).sum(1)
+        pre_nms_top_n = candidate_inds.reshape(N, -1).sum(1)#先获得每一个图片,大于阈值的anchor类别数目(没一个anchor的类别数目为80)
         pre_nms_top_n = pre_nms_top_n.clamp(max=self.pre_nms_top_n)
 
         centerness = permute_and_flatten(centerness, N, A, 1, H, W)
