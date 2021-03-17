@@ -294,10 +294,11 @@ class ATSSLossComputation(object):
         reg_targets_flatten = reg_targets_flatten[pos_inds]
         anchors_flatten = anchors_flatten[pos_inds]
         centerness_flatten = centerness_flatten[pos_inds]
-        centerness_targets = self.compute_centerness_targets(reg_targets_flatten, anchors_flatten)
-        sum_centerness_targets_avg_per_gpu = reduce_sum(centerness_targets.sum()).item() / float(num_gpus)
+        
 
         if pos_inds.numel() > 0:
+            centerness_targets = self.compute_centerness_targets(reg_targets_flatten, anchors_flatten)
+            sum_centerness_targets_avg_per_gpu = reduce_sum(centerness_targets.sum()).item() / float(num_gpus)
             reg_loss = self.GIoULoss(box_regression_flatten, reg_targets_flatten, anchors_flatten,
                                      weight=centerness_targets) / sum_centerness_targets_avg_per_gpu
             centerness_loss = self.centerness_loss_func(centerness_flatten, centerness_targets) / num_pos_avg_per_gpu
