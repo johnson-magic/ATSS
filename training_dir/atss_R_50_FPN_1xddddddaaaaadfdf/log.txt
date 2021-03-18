@@ -1,0 +1,3 @@
+2021-02-25 03:17:42,692 atss_core INFO: Using 1 GPUs
+2021-02-25 03:17:42,692 atss_core INFO: Namespace(config_file='configs/atss/atss_R_50_FPN_1x.yaml', distributed=False, local_rank=0, opts=['DATALOADER.NUM_WORKERS', '1', 'OUTPUT_DIR', 'training_dir/atss_R_50_FPN_1xddddddaaaaadfdf'], skip_test=False)
+2021-02-25 03:17:42,692 atss_core INFO: Collecting env info (might take some time)

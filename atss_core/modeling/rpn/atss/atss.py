@@ -211,28 +211,32 @@ class ATSSModule(torch.nn.Module):
         else:
             return self._forward_test(box_cls, box_regression, centerness, anchors)
 
-    def _forward_train_utest(func):
+    def _forward_test_utest(func):
         def wrapper(*args, **kwargs):
-            print(type(args[1]), type(args[2], type(args[3]), type(args[4]), type(args[5])))
+            #print(type(args[1]), type(args[2]), type(args[3]), type(args[4]), type(args[5]))
             import os
             try:
-                os.mkdir('_forward_train_utest')
+                os.mkdir('_forward_test_utest')
             except OSError:
-                print("Creation of the directory _forward_train_utest failed")
+                print("Creation of the directory _forward_test_utest failed")
             else:
-                print("Successfully created the directory _forward_train_utest")
+                print("Successfully created the directory _forward_test_utest")
 
-            torch.save(args[1], "_forward_train_box_cls_utest_input.pt")
-            torch.save(args[2], "_forward_train_box_reg_utest_input.pt")
-            torch.save(args[3], "_forward_train_box_centerness_utest_input.pt")
+            torch.save(args[1], "./_forward_test_utest/_forward_train_box_cls_utest_input.pt")
+            torch.save(args[2], "./_forward_test_utest/_forward_train_box_reg_utest_input.pt")
+            torch.save(args[3], "./_forward_test_utest/_forward_train_box_centerness_utest_input.pt")
             for id in range(len(args[4])):
-                torch.save(args[4][id].bbox, "_forward_train_box_targets_utest_input_{}.pt".format(id))
-                for anchor_id in range(len(args[5][id]))
-                    torch.save(args[5][id][anchor_id].bbox, "_forward_train_box_anchors_utest_input_{}_{}.pt".format(id, anchor_id))
+                #torch.save(args[4][id].bbox, "./_forward_train_utest/_forward_train_box_targets_utest_input_{}.pt".format(id))
+                #torch.save(args[4][id].get_field("labels"), "./_forward_train_utest/_forward_train_box_target_label_utest_input_{}.pt".format(id))
+                for anchor_id in range(len(args[4][id])):
+                    torch.save(args[4][id][anchor_id].bbox, "./_forward_test_utest/_forward_test_box_anchors_utest_input_{}_{}.pt".format(id, anchor_id))
+                    torch.save(args[4][id][anchor_id].size, "./_forward_test_utest/_forward_test_img_size_utest_input_{}_{}.pt".format(id, anchor_id))
+            res = func(*args, **kwargs)
+            return res
             
 
         return wrapper
-    @_forward_train_utest
+    #@_forward_train_utest
     def _forward_train(self, box_cls, box_regression, centerness, targets, anchors):
         loss_box_cls, loss_box_reg, loss_centerness = self.loss_evaluator(
             box_cls, box_regression, centerness, targets, anchors
@@ -243,7 +247,7 @@ class ATSSModule(torch.nn.Module):
             "loss_centerness": loss_centerness
         }
         return None, losses
-
+    @_forward_test_utest
     def _forward_test(self, box_cls, box_regression, centerness, anchors):
         boxes = self.box_selector_test(box_cls, box_regression, centerness, anchors)
         return boxes, {}
