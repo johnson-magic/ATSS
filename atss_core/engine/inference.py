@@ -36,6 +36,7 @@ def compute_on_dataset(model, data_loader, device, timer=None):
                 torch.cuda.synchronize()
                 timer.toc()
             output = [o.to(cpu_device) for o in output]
+        #torch.save(output[0].bbox, '123.pt')
         results_dict.update(
             {img_id: result for img_id, result in zip(image_ids, output)}
         )

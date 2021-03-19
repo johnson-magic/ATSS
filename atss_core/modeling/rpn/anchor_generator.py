@@ -111,13 +111,13 @@ class AnchorGenerator(nn.Module):
     
     def AnchorGenerator_utest(func):
         def wrapper(*args, **kwargs):
-            print("the type of atss_AnchorGenerator_utest is {}".format(type(args[2])))
-            for i, t in enumerate(args[2]):
-                torch.save(t, 'atss_AnchorGenerator_utest_input_{}.pt'.format(i))
-                print("save atss_AnchorGenerator_utest_input_{}.pt success!".format(i))
+            #print("the type of atss_AnchorGenerator_utest is {}".format(type(args[2])))
+            #for i, t in enumerate(args[2]):
+            #    torch.save(t, 'atss_AnchorGenerator_utest_input_{}.pt'.format(i))
+            #    print("save atss_AnchorGenerator_utest_input_{}.pt success!".format(i))
             res = func(*args, **kwargs)
-            torch.save(res, 'atss_AnchorGenerator_utest_output.pt')
-            print("atss_AnchorGenerator_utest_output.pt success!")
+            #torch.save(res, 'atss_AnchorGenerator_utest_output.pt')
+            #print("atss_AnchorGenerator_utest_output.pt success!")
             return res
         return wrapper
 

@@ -70,6 +70,7 @@ def do_coco_evaluation(
 def prepare_for_coco_detection(predictions, dataset):
     # assert isinstance(dataset, COCODataset)
     coco_results = []
+    custom_results = []
     for image_id, prediction in enumerate(predictions):
         original_id = dataset.id_to_img_map[image_id]
         if len(prediction) == 0:
@@ -86,7 +87,12 @@ def prepare_for_coco_detection(predictions, dataset):
         labels = prediction.get_field("labels").tolist()
 
         mapped_labels = [dataset.contiguous_category_id_to_json_id[i] for i in labels]
-
+        custom_results.extend(
+                [{
+                    'file_name': img_info['file_name'],
+                    'bbox': boxes,
+                    }])
+        
         coco_results.extend(
             [
                 {
@@ -98,6 +104,7 @@ def prepare_for_coco_detection(predictions, dataset):
                 for k, box in enumerate(boxes)
             ]
         )
+    torch.save(custom_results, 'custom_results.pth')
     return coco_results
 
 

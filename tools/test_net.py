@@ -19,7 +19,7 @@ from atss_core.utils.miscellaneous import mkdir
 import pdb
 import json
 def main():
-    pdb.set_trace()
+    #pdb.set_trace()
     parser = argparse.ArgumentParser(description="PyTorch Object Detection Inference")
     parser.add_argument(
         "--config-file",
